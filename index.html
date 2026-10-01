@@ -165,6 +165,40 @@
   .fnote{ font-size:.78rem; color:var(--muted); text-align:center; margin-top:14px; line-height:1.4; }
   .fnote a{ color:var(--vinho); }
   .leadForm button.btn[disabled]{ opacity:.7; cursor:wait; }
+  /* honeypot: fora da tela e fora do leitor de tela; humano não vê, robô preenche */
+  .hp{ position:absolute !important; left:-10000px !important; top:auto; width:1px; height:1px; overflow:hidden; }
+
+  /* WhatsApp com país (intl-tel-input, carregado só quando o formulário abre) */
+  .iti, .iti--detached-country-selector{
+    --iti-hover-color:rgba(42,14,22,.07); --iti-border-color:var(--line); --iti-icon-color:var(--vinho);
+    --iti-country-selector-bg:#fff; --iti-spacer-horizontal:12px; --iti-arrow-padding:8px; --iti-flag-width:22px;
+  }
+  .form-group .iti{ display:block; width:100%; }
+  .leadForm .iti__country-container{ padding:1.5px; }
+  .leadForm .iti__selected-country{ font-family:"Inter",system-ui,sans-serif; }
+  .leadForm .iti__selected-country-primary{ background:var(--bg); border-right:1.5px solid var(--line); }
+  .leadForm .iti__selected-dial-code{ margin-left:0; padding:0 4px 0 10px; font-weight:600; color:var(--vinho); }
+  .leadForm .iti__selected-country[aria-expanded=true] .iti__selected-country-primary{ background:var(--bg2); }
+  .leadForm .iti__selected-country:focus-visible{ outline:2px solid var(--vinho); outline-offset:-2px; }
+  body .iti__flag{ border-radius:0; box-shadow:0 0 0 1px rgba(42,14,22,.12); }
+  body .iti__country-selector{ border-radius:0; font-family:"Inter",system-ui,sans-serif; color:var(--ink); }
+  body .iti--inline-country-selector .iti__country-selector{ border:1.5px solid var(--vinho); box-shadow:0 18px 40px rgba(42,14,22,.22); margin-top:2px; }
+  body .iti--inline-country-selector .iti__country-list{ max-height:230px; }
+  body .iti__search-input-wrapper{ border-bottom:1.5px solid var(--line); background:var(--bg); }
+  body .iti__search-input{ font-family:inherit; font-size:16px; color:var(--ink); background:transparent; outline:none; border-radius:0; padding-top:12px; padding-bottom:12px; }
+  body .iti__search-input::placeholder{ color:var(--muted); }
+  body .iti__country{ font-size:.95rem; padding-top:10px; padding-bottom:10px; }
+  body .iti__country.iti__highlight{ background:rgba(42,14,22,.07); }
+  body .iti__country[aria-selected=true] .iti__country-name{ font-weight:600; color:var(--vinho); }
+  body .iti__dial-code{ color:var(--muted); font-variant-numeric:tabular-nums; }
+  body .iti__country-check{ color:var(--vinho); }
+  body .iti__no-results{ color:var(--muted); font-size:.92rem; }
+  body .iti__country-list{ scrollbar-width:thin; scrollbar-color:rgba(42,14,22,.3) transparent; }
+  /* celular: lista em tela cheia, por cima do modal, no fundo vinho da página */
+  body .iti--fullscreen-popup.iti--detached-country-selector{ background:rgba(20,6,10,.82); backdrop-filter:blur(3px); padding:56px 16px 16px; z-index:1060; }
+  body .iti--fullscreen-popup .iti__country-selector{ border:0; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+  body .iti--fullscreen-popup .iti__close-button{ right:0; color:#F3E9E4; }
+  body .iti--fullscreen-popup .iti__country{ padding:12px 14px; }
 
   footer{ background:var(--vinho); color:#c7a9ae; padding:6vh 0 4vh; }
   footer .fgrid{ display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
@@ -418,8 +452,12 @@
       <span class="msg">Informe um e-mail válido.</span>
     </div>
     <div class="form-group" id="f-tel">
-      <input id="PHONE" name="whatsapp" type="tel" placeholder="WhatsApp com DDD" inputmode="numeric" maxlength="15" autocomplete="tel" required>
-      <span class="msg">Informe um telefone válido com DDD.</span>
+      <input id="PHONE" name="whatsapp" type="tel" placeholder="WhatsApp com DDD" inputmode="tel" autocomplete="tel" aria-label="WhatsApp" aria-describedby="tel-msg" required>
+      <span class="msg" id="tel-msg" aria-live="polite">Informe seu WhatsApp com DDD.</span>
+    </div>
+    <div class="hp" aria-hidden="true">
+      <label for="SITE">Seu site</label>
+      <input id="SITE" name="site" type="text" tabindex="-1" autocomplete="off">
     </div>
     <div class="form-group" id="f-perfil">
       <select id="PERFIL" name="perfil" required>
@@ -439,7 +477,15 @@
   /* ---- CONFIGURAÇÃO DO FORMULÁRIO (como ligar: ../formulario/LEIA-ME.md) ---- */
   var CONFIG = {
     PLANILHA_URL: 'https://script.google.com/macros/s/AKfycbwT2uodnKqNECF2BlGBXm5ainAEwc0QAlnvf2QmZyL_yPo8vhHvCu9w6ogYeBodE_o/exec',
-    WHATSAPP: '5521984147640'   // provisório: número pessoal do Victor até a HALVES ter o dela
+    WHATSAPP: '5521984147640',  // provisório: número pessoal do Victor até a HALVES ter o dela
+    /* CRM (Supabase). A chave publishable é pública por natureza: só executa a RPC capturar_lead. */
+    SUPABASE_URL: 'https://yjmuwpkvoexunkjcafgv.supabase.co',
+    SUPABASE_KEY: 'sb_publishable_evVh_bIikrP4SMP16OMmsw_5UqqDWLV',
+    ENVIO_TIMEOUT_MS: 8000,
+    /* seletor de país do WhatsApp: versão travada + hash de integridade */
+    ITI: 'https://cdn.jsdelivr.net/npm/intl-tel-input@29.5.3/dist',
+    ITI_JS_SRI: 'sha384-1k5t9CQZrBJeWjMvg0TBTlVboAUK8rjnCB32B82h3uEU1PJjbPEvC9nLAZZPqDLl',
+    ITI_CSS_SRI: 'sha384-khdvUrzJNN6Jw9yHboN6430RRijNf+nAlKcZv0a5IrkTjwZpwgJ9fzD3kjbqhOyZ'
   };
 
   /* guarda as UTMs da chegada, mesmo se a pessoa navegar pela página antes de enviar */
@@ -451,7 +497,7 @@
 
   /* ---- MODAL ---- */
   var modal = document.getElementById('formModal');
-  function openForm(){ modal.classList.add('open'); document.body.style.overflow='hidden'; setTimeout(function(){ document.getElementById('FNAME').focus(); },50); }
+  function openForm(){ carregaTel(); modal.classList.add('open'); document.body.style.overflow='hidden'; setTimeout(function(){ document.getElementById('FNAME').focus(); },50); }
   function closeForm(){ modal.classList.remove('open'); document.body.style.overflow=''; }
   document.querySelectorAll('[data-open-form]').forEach(function(b){ b.addEventListener('click', openForm); });
   document.querySelectorAll('[data-close-form]').forEach(function(b){ b.addEventListener('click', closeForm); });
@@ -483,60 +529,219 @@
 
   /* ---- FORMULÁRIO ---- */
   var tel = document.getElementById('PHONE');
-  tel.addEventListener('input', function(){
-    var v = this.value.replace(/\D/g,'').slice(0,11);
-    if(v.length===0){ this.value=''; return; }
-    if(v.length<=2){ this.value='('+v; return; }
-    if(v.length<=7){ this.value='('+v.slice(0,2)+') '+v.slice(2); return; }
-    this.value='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  var telMsg = document.getElementById('tel-msg');
+  var iti = null, itiCarga = null;
+
+  /* intl-tel-input: CSS e JS só quando o formulário abre (ou o dedo chega no botão);
+     o utils (validação e máscara por país, ~260 KB) só depois disso, sob demanda. */
+  function carregaTel(){
+    if(itiCarga) return itiCarga;
+    itiCarga = new Promise(function(ok, falha){
+      var css = document.createElement('link');
+      css.rel = 'stylesheet'; css.href = CONFIG.ITI + '/css/intlTelInput.min.css';
+      css.integrity = CONFIG.ITI_CSS_SRI; css.crossOrigin = 'anonymous';
+      document.head.appendChild(css);
+      var js = document.createElement('script');
+      js.src = CONFIG.ITI + '/js/intlTelInput.min.js';
+      js.integrity = CONFIG.ITI_JS_SRI; js.crossOrigin = 'anonymous';
+      js.onload = ok; js.onerror = falha;
+      document.head.appendChild(js);
+    }).then(iniciaTel).catch(function(){ itiCarga = null; });
+    return itiCarga;
+  }
+  function iniciaTel(){
+    if(iti || !window.intlTelInput) return;
+    iti = window.intlTelInput(tel, {
+      initialCountry: 'br',
+      separateDialCode: true,
+      countryOrder: ['br','pt','us'],
+      countryNameLocale: 'pt-BR',
+      countryNameOverrides: { us: 'Estados Unidos (EUA)' },   /* quem busca "eua" acha */
+      countrySearch: true,
+      dropdownParent: document.body,   /* fora do card do form: o overflow do modal não corta a lista */
+      formatAsYouType: true,
+      placeholderNumberPolicy: 'AGGRESSIVE',
+      placeholderNumberType: 'MOBILE',
+      uiTranslations: {
+        selectedCountryAriaLabel: 'País do WhatsApp: ${countryName} (${dialCode}). Trocar país',
+        noCountrySelected: 'Escolha o país do WhatsApp',
+        countryListAriaLabel: 'Lista de países',
+        searchPlaceholder: 'Buscar país',
+        clearSearchAriaLabel: 'Limpar busca',
+        closeCountrySelectorAriaLabel: 'Fechar',
+        searchEmptyState: 'Nenhum país com esse nome',
+        searchSummaryAria: function(n){ return n === 1 ? '1 país encontrado' : n + ' países encontrados'; }
+      },
+      loadUtils: function(){ return import(CONFIG.ITI + '/js/utils.js'); }
+    });
+    tel.addEventListener('countrychange', function(){ setErr('f-tel', false); });
+  }
+  document.querySelectorAll('[data-open-form]').forEach(function(b){
+    b.addEventListener('pointerenter', carregaTel, { once:true });
+    b.addEventListener('touchstart', carregaTel, { once:true, passive:true });
   });
+
+  function paisAtual(){ return iti ? ((iti.getSelectedCountry() || {}).iso2 || '') : 'br'; }
+
+  /* Brasil: o +55 já está no seletor. Se a pessoa digitar ou colar o 55 de novo, ele sai.
+     Só com 12 ou 13 dígitos: DDD 55 existe (RS), então "começa com 55" sozinho não basta. */
+  function semDDI(d){ return paisAtual() === 'br' && d.length >= 12 && d.indexOf('55') === 0; }
+  /* tecla a tecla: a biblioteca trava no tamanho máximo do número brasileiro, então o 12º dígito
+     nunca chegaria ao "input". Aqui ele entra e o 55 da frente sai. */
+  tel.addEventListener('keydown', function(e){
+    if(!iti || !/^[0-9]$/.test(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if(this.selectionStart !== this.value.length) return;
+    var novo = this.value.replace(/\D/g,'') + e.key;
+    if(!semDDI(novo)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    iti.setNumber('+' + novo);
+  });
+  /* colar ou autopreencher com o 55 junto: o país fica no seletor, o número sem o 55 */
+  tel.addEventListener('paste', function(e){
+    if(!iti) return;
+    var txt = (e.clipboardData && e.clipboardData.getData('text')) || '';
+    var d = txt.replace(/\D/g,'');
+    if(!d || this.value.replace(/\D/g,'')) return;
+    if(semDDI(d) || /^\s*(\+|00)/.test(txt)){
+      e.preventDefault(); e.stopImmediatePropagation();
+      iti.setNumber('+' + d.replace(/^00/, ''));
+      this.dispatchEvent(new Event('input', { bubbles:true }));
+    }
+  });
+  tel.addEventListener('input', function(){
+    if(paisAtual() !== 'br') return;
+    var d = this.value.replace(/\D/g,'');
+    if(semDDI(d)){
+      if(iti){ iti.setNumber('+' + d); return; }
+      d = d.slice(2); this.value = d;
+    }
+    if(iti) return;
+    /* sem a biblioteca (CDN fora): máscara brasileira de antes */
+    d = d.slice(0,11);
+    if(d.length===0){ this.value=''; return; }
+    if(d.length<=2){ this.value='('+d; return; }
+    if(d.length<=7){ this.value='('+d.slice(0,2)+') '+d.slice(2); return; }
+    this.value='('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
+  });
+
+  /* devolve { e164, pais } ou { erro: 'texto' } */
+  function leTelefone(){
+    var d = tel.value.replace(/\D/g,'');
+    var pais = paisAtual();
+    if(!d) return { erro: 'Informe seu WhatsApp.' };
+    if(iti && window.intlTelInput.utils){
+      if(iti.isValidNumber()) return { e164: iti.getNumber('E164'), pais: pais.toUpperCase() };
+      var e = iti.getValidationError();
+      if(e === 'TOO_SHORT') return { erro: pais === 'br' ? 'Faltou dígito. Confere o DDD e o número.' : 'Faltou dígito. Confere o número.' };
+      if(e === 'TOO_LONG') return { erro: 'Sobrou dígito. Confere o número.' };
+      return { erro: 'Esse número não bate com o país escolhido. Confere a bandeira e o número.' };
+    }
+    /* reserva, se o utils não carregou: regra simples por tamanho */
+    if(pais === 'br'){
+      if(d.length < 10 || d.length > 11) return { erro: 'Confere o DDD e o número.' };
+      return { e164: '+55' + d, pais: 'BR' };
+    }
+    var dial = ((iti && iti.getSelectedCountry()) || {}).dialCode;
+    if(!dial || d.length < 6 || d.length > 14) return { erro: 'Confere o número e o país escolhido.' };
+    return { e164: '+' + dial + d, pais: pais.toUpperCase() };
+  }
+
   function emailOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
-  function telOk(v){ return v.replace(/\D/g,'').length >= 10; }
   function setErr(id,on){ document.getElementById(id).classList.toggle('err', on); }
   [['FNAME','f-nome'],['EMAIL','f-email'],['PHONE','f-tel'],['PERFIL','f-perfil']].forEach(function(p){
     document.getElementById(p[0]).addEventListener('input', function(){ setErr(p[1], false); });
   });
+
+  /* fetch com prazo: o lead nunca fica preso esperando servidor */
+  function comPrazo(url, opts){
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var t = ctrl ? setTimeout(function(){ ctrl.abort(); }, CONFIG.ENVIO_TIMEOUT_MS) : null;
+    if(ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function(){ clearTimeout(t); });
+  }
+  function enviaCRM(d, site){
+    if(!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return Promise.resolve(null);
+    var corpo = {
+      p_nome: d.nome, p_email: d.email, p_whatsapp: d.whatsapp, p_pais: d.pais, p_perfil: d.perfil,
+      p_utm_source: d.utm_source, p_utm_medium: d.utm_medium, p_utm_campaign: d.utm_campaign,
+      p_utm_content: d.utm_content, p_utm_term: d.utm_term,
+      p_pagina: d.pagina, p_referrer: d.referrer, p_site: site
+    };
+    return comPrazo(CONFIG.SUPABASE_URL + '/rest/v1/rpc/capturar_lead', {
+      method:'POST', keepalive:true,
+      headers:{ 'apikey': CONFIG.SUPABASE_KEY, 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(corpo)
+    }).then(function(r){ return r.json(); }).catch(function(){ return null; });
+  }
+  function enviaPlanilha(d){
+    if(!CONFIG.PLANILHA_URL) return Promise.resolve(null);
+    /* no-cors: a resposta é opaca, serve de backup e não dá pra conferir daqui.
+       O Apps Script grava em ~1 s, mas o redirecionamento da resposta dele pode segurar o fetch
+       até o fim do prazo. Sem abortar: o keepalive termina o envio mesmo depois de ir pro WhatsApp;
+       a gente só espera até 3 s por ele. */
+    var envio;
+    try{
+      envio = fetch(CONFIG.PLANILHA_URL, { method:'POST', mode:'no-cors', keepalive:true,
+        headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
+        .then(function(){ return true; }).catch(function(){ return null; });
+    }catch(err){ return Promise.resolve(null); }
+    return Promise.race([envio, new Promise(function(r){ setTimeout(function(){ r(null); }, 3000); })]);
+  }
+
   var form = document.getElementById('leadForm');
+  var enviando = false;
   form.addEventListener('submit', function(e){
     e.preventDefault();
+    if(enviando) return;
+    var btn = document.getElementById('cta');
+    /* utils ainda chegando? espera até 3 s antes de validar o número */
+    var pronto = (iti && !window.intlTelInput.utils && iti.promise)
+      ? Promise.race([iti.promise.catch(function(){}), new Promise(function(r){ setTimeout(r, 3000); })])
+      : Promise.resolve();
+    btn.disabled = true;
+    pronto.then(function(){ btn.disabled = false; valida(btn); });
+  });
+
+  function valida(btn){
     var ok = true;
-    if(!document.getElementById('FNAME').value.trim()){ setErr('f-nome',true); ok=false; }
+    var nome = document.getElementById('FNAME').value.trim().slice(0,120);
+    if(nome.length < 2){ setErr('f-nome',true); ok=false; }
     if(!emailOk(document.getElementById('EMAIL').value)){ setErr('f-email',true); ok=false; }
-    if(!telOk(tel.value)){ setErr('f-tel',true); ok=false; }
+    var t = leTelefone();
+    if(t.erro){ telMsg.textContent = t.erro; setErr('f-tel',true); ok=false; }
     if(!document.getElementById('PERFIL').value){ setErr('f-perfil',true); ok=false; }
     if(!ok) return;
 
-    var nome = document.getElementById('FNAME').value.trim();
     var perfil = document.getElementById('PERFIL').value;
+    var site = document.getElementById('SITE').value;
     var dados = {
       nome: nome,
-      email: document.getElementById('EMAIL').value.trim(),
-      whatsapp: tel.value,
+      email: document.getElementById('EMAIL').value.trim().slice(0,254),
+      whatsapp: t.e164,
+      pais: t.pais,
       perfil: perfil,
-      pagina: location.href.split('#')[0],
-      referrer: document.referrer
+      pagina: location.href.split('#')[0].slice(0,500),
+      referrer: document.referrer.slice(0,500)
     };
-    for(var k in UTM){ dados[k] = UTM[k]; }
+    for(var k in UTM){ dados[k] = UTM[k].slice(0,200); }
 
-    var btn = document.getElementById('cta');
+    enviando = true;
     btn.disabled = true; btn.textContent = 'Enviando...';
 
-    /* keepalive: o envio termina mesmo se a página já tiver ido pro WhatsApp */
-    if(CONFIG.PLANILHA_URL){
-      try{
-        fetch(CONFIG.PLANILHA_URL, { method:'POST', mode:'no-cors', keepalive:true,
-          headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
-      }catch(err){}
-    }
-
-    form.innerHTML = '<div style="text-align:center; padding:20px 0;"><div style="font-family:Chakra Petch,sans-serif; font-weight:700; font-size:1.4rem; color:#2A0E16; margin-bottom:8px;">Recebido!</div><p style="color:#6f5a5f; font-size:.9rem;">'
-      + (CONFIG.WHATSAPP ? 'Abrindo o WhatsApp pra gente continuar a conversa...' : 'Logo a gente te chama pra conversar.') + '</p></div>';
-
-    if(CONFIG.WHATSAPP){
-      var msg = 'Oi! Sou ' + nome + (perfil && perfil !== 'Outro' ? ', ' + perfil.toLowerCase() : '') + '. Vim pela página da HALVES e quero entender como funciona.';
-      setTimeout(function(){ location.href = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg); }, 700);
-    }
-  });
+    /* grava nos dois em paralelo; o WhatsApp abre depois de tentar os dois, mesmo se algum falhar */
+    var envios = [enviaCRM(dados, site), site ? Promise.resolve(null) : enviaPlanilha(dados)];
+    Promise.all(envios).then(function(res){
+      var gravou = res[0] && res[0].ok === true;
+      form.innerHTML = '<div style="text-align:center; padding:20px 0;">'
+        + (gravou ? '<div style="font-family:Chakra Petch,sans-serif; font-weight:700; font-size:1.4rem; color:#2A0E16; margin-bottom:8px;">Recebido!</div>' : '')
+        + '<p style="color:#6f5a5f; font-size:.9rem;">'
+        + (CONFIG.WHATSAPP ? 'Abrindo o WhatsApp pra gente continuar a conversa...' : 'Logo a gente te chama pra conversar.') + '</p></div>';
+      if(CONFIG.WHATSAPP){
+        var msg = 'Oi! Sou ' + nome + (perfil && perfil !== 'Outro' ? ', ' + perfil.toLowerCase() : '') + '. Vim pela página da HALVES e quero entender como funciona.';
+        setTimeout(function(){ location.href = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg); }, 700);
+      }
+    });
+  }
 </script>
 
 </body>
