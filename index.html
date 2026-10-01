@@ -163,6 +163,8 @@
   .form-group.err .msg{ display:block; }
   .leadForm button.btn{ width:100%; margin-top:6px; }
   .fnote{ font-size:.78rem; color:var(--muted); text-align:center; margin-top:14px; line-height:1.4; }
+  .fnote a{ color:var(--vinho); }
+  .leadForm button.btn[disabled]{ opacity:.7; cursor:wait; }
 
   footer{ background:var(--vinho); color:#c7a9ae; padding:6vh 0 4vh; }
   footer .fgrid{ display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
@@ -392,8 +394,8 @@
         <div><span>HALVES</span><small>Marketing com processo e dados.</small></div>
       </div>
       <div class="flinks">
-        <a href="#" data-legal="privacidade">Política de Privacidade</a>
-        <a href="#" data-legal="termos">Termos de Uso</a>
+        <a href="politica-de-privacidade.html">Política de Privacidade</a>
+        <a href="termos-de-uso.html">Termos de Uso</a>
         <a href="#comecar">Fale com a gente</a>
       </div>
     </div>
@@ -429,11 +431,24 @@
       <span class="msg">Selecione uma opção.</span>
     </div>
     <button type="submit" id="cta" class="btn">Quero falar com a HALVES</button>
-    <p class="fnote">Sem compromisso. A gente entende o seu caso antes de propor qualquer coisa.</p>
+    <p class="fnote">Ao enviar, você concorda com a <a href="politica-de-privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. Seus dados são usados só pra gente falar com você.</p>
   </form>
 </div>
 
 <script>
+  /* ---- CONFIGURAÇÃO DO FORMULÁRIO (como ligar: ../formulario/LEIA-ME.md) ---- */
+  var CONFIG = {
+    PLANILHA_URL: '',   // URL do app do Apps Script (termina em /exec)
+    WHATSAPP: ''        // número da HALVES com DDI e DDD, só dígitos. Ex.: 5521999998888
+  };
+
+  /* guarda as UTMs da chegada, mesmo se a pessoa navegar pela página antes de enviar */
+  var UTM = (function(){
+    var q = new URLSearchParams(location.search), o = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){ o[k] = q.get(k) || ''; });
+    return o;
+  })();
+
   /* ---- MODAL ---- */
   var modal = document.getElementById('formModal');
   function openForm(){ modal.classList.add('open'); document.body.style.overflow='hidden'; setTimeout(function(){ document.getElementById('FNAME').focus(); },50); }
@@ -490,7 +505,37 @@
     if(!telOk(tel.value)){ setErr('f-tel',true); ok=false; }
     if(!document.getElementById('PERFIL').value){ setErr('f-perfil',true); ok=false; }
     if(!ok) return;
-    form.innerHTML = '<div style="text-align:center; padding:20px 0;"><div style="font-family:Chakra Petch,sans-serif; font-weight:700; font-size:1.4rem; color:#2A0E16; margin-bottom:8px;">Recebido!</div><p style="color:#6f5a5f; font-size:.9rem;">Logo a gente te chama pra conversar.</p></div>';
+
+    var nome = document.getElementById('FNAME').value.trim();
+    var perfil = document.getElementById('PERFIL').value;
+    var dados = {
+      nome: nome,
+      email: document.getElementById('EMAIL').value.trim(),
+      whatsapp: tel.value,
+      perfil: perfil,
+      pagina: location.href.split('#')[0],
+      referrer: document.referrer
+    };
+    for(var k in UTM){ dados[k] = UTM[k]; }
+
+    var btn = document.getElementById('cta');
+    btn.disabled = true; btn.textContent = 'Enviando...';
+
+    /* keepalive: o envio termina mesmo se a página já tiver ido pro WhatsApp */
+    if(CONFIG.PLANILHA_URL){
+      try{
+        fetch(CONFIG.PLANILHA_URL, { method:'POST', mode:'no-cors', keepalive:true,
+          headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(dados) });
+      }catch(err){}
+    }
+
+    form.innerHTML = '<div style="text-align:center; padding:20px 0;"><div style="font-family:Chakra Petch,sans-serif; font-weight:700; font-size:1.4rem; color:#2A0E16; margin-bottom:8px;">Recebido!</div><p style="color:#6f5a5f; font-size:.9rem;">'
+      + (CONFIG.WHATSAPP ? 'Abrindo o WhatsApp pra gente continuar a conversa...' : 'Logo a gente te chama pra conversar.') + '</p></div>';
+
+    if(CONFIG.WHATSAPP){
+      var msg = 'Oi! Sou ' + nome + (perfil && perfil !== 'Outro' ? ', ' + perfil.toLowerCase() : '') + '. Vim pela página da HALVES e quero entender como funciona.';
+      setTimeout(function(){ location.href = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg); }, 700);
+    }
   });
 </script>
 
