@@ -481,7 +481,8 @@
     /* CRM (Supabase). A chave publishable é pública por natureza: só executa a RPC capturar_lead. */
     SUPABASE_URL: 'https://yjmuwpkvoexunkjcafgv.supabase.co',
     SUPABASE_KEY: 'sb_publishable_evVh_bIikrP4SMP16OMmsw_5UqqDWLV',
-    ENVIO_TIMEOUT_MS: 8000,
+    ENVIO_TIMEOUT_MS: 8000,     // prazo do fetch do CRM
+    RPC_ESPERA_MS: 1500,        // quanto o WhatsApp espera a resposta do CRM antes de abrir
     /* seletor de país do WhatsApp: versão travada + hash de integridade */
     ITI: 'https://cdn.jsdelivr.net/npm/intl-tel-input@29.5.3/dist',
     ITI_JS_SRI: 'sha384-1k5t9CQZrBJeWjMvg0TBTlVboAUK8rjnCB32B82h3uEU1PJjbPEvC9nLAZZPqDLl',
@@ -536,6 +537,12 @@
      o utils (validação e máscara por país, ~260 KB) só depois disso, sob demanda. */
   function carregaTel(){
     if(itiCarga) return itiCarga;
+    /* já abre a conexão com o CRM: no envio sobra só a ida e volta da RPC */
+    if(CONFIG.SUPABASE_URL && !document.getElementById('pc-crm')){
+      var pc = document.createElement('link');
+      pc.id = 'pc-crm'; pc.rel = 'preconnect'; pc.href = CONFIG.SUPABASE_URL; pc.crossOrigin = 'anonymous';
+      document.head.appendChild(pc);
+    }
     itiCarga = new Promise(function(ok, falha){
       var css = document.createElement('link');
       css.rel = 'stylesheet'; css.href = CONFIG.ITI + '/css/intlTelInput.min.css';
@@ -673,19 +680,18 @@
       body: JSON.stringify(corpo)
     }).then(function(r){ return r.json(); }).catch(function(){ return null; });
   }
+  /* planilha (backup): sendBeacon é dispara e esquece, sobrevive à ida pro WhatsApp e ninguém espera por ele.
+     Sem sendBeacon, ou se ele recusar, vai pelo fetch no-cors com keepalive, também sem esperar. */
   function enviaPlanilha(d){
-    if(!CONFIG.PLANILHA_URL) return Promise.resolve(null);
-    /* no-cors: a resposta é opaca, serve de backup e não dá pra conferir daqui.
-       O Apps Script grava em ~1 s, mas o redirecionamento da resposta dele pode segurar o fetch
-       até o fim do prazo. Sem abortar: o keepalive termina o envio mesmo depois de ir pro WhatsApp;
-       a gente só espera até 3 s por ele. */
-    var envio;
+    if(!CONFIG.PLANILHA_URL) return;
+    var corpo = JSON.stringify(d);
     try{
-      envio = fetch(CONFIG.PLANILHA_URL, { method:'POST', mode:'no-cors', keepalive:true,
-        headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(d) })
-        .then(function(){ return true; }).catch(function(){ return null; });
-    }catch(err){ return Promise.resolve(null); }
-    return Promise.race([envio, new Promise(function(r){ setTimeout(function(){ r(null); }, 3000); })]);
+      if(navigator.sendBeacon && navigator.sendBeacon(CONFIG.PLANILHA_URL, new Blob([corpo], { type:'text/plain;charset=utf-8' }))) return;
+    }catch(err){}
+    try{
+      fetch(CONFIG.PLANILHA_URL, { method:'POST', mode:'no-cors', keepalive:true,
+        headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: corpo }).catch(function(){});
+    }catch(err){}
   }
 
   var form = document.getElementById('leadForm');
@@ -728,17 +734,19 @@
     enviando = true;
     btn.disabled = true; btn.textContent = 'Enviando...';
 
-    /* grava nos dois em paralelo; o WhatsApp abre depois de tentar os dois, mesmo se algum falhar */
-    var envios = [enviaCRM(dados, site), site ? Promise.resolve(null) : enviaPlanilha(dados)];
-    Promise.all(envios).then(function(res){
-      var gravou = res[0] && res[0].ok === true;
+    /* grava nos dois em paralelo. A planilha sai sem espera; o CRM a gente espera até 1,5 s.
+       Passou disso, segue pro WhatsApp e o keepalive termina o envio (prazo total de 8 s). */
+    if(!site) enviaPlanilha(dados);
+    var crm = enviaCRM(dados, site);
+    Promise.race([crm, new Promise(function(r){ setTimeout(function(){ r(null); }, CONFIG.RPC_ESPERA_MS); })]).then(function(res){
+      var gravou = res && res.ok === true;
       form.innerHTML = '<div style="text-align:center; padding:20px 0;">'
         + (gravou ? '<div style="font-family:Chakra Petch,sans-serif; font-weight:700; font-size:1.4rem; color:#2A0E16; margin-bottom:8px;">Recebido!</div>' : '')
         + '<p style="color:#6f5a5f; font-size:.9rem;">'
         + (CONFIG.WHATSAPP ? 'Abrindo o WhatsApp pra gente continuar a conversa...' : 'Logo a gente te chama pra conversar.') + '</p></div>';
       if(CONFIG.WHATSAPP){
         var msg = 'Oi! Sou ' + nome + (perfil && perfil !== 'Outro' ? ', ' + perfil.toLowerCase() : '') + '. Vim pela página da HALVES e quero entender como funciona.';
-        setTimeout(function(){ location.href = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg); }, 700);
+        setTimeout(function(){ location.href = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg); }, 120);
       }
     });
   }
