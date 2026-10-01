@@ -4,12 +4,15 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2A0E16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232A0E16'/%3E%3Cpath fill='%23F3E9E4' d='M12 12H46V46H30V88H12Z'/%3E%3Cpath fill='%23F3E9E4' d='M88 88H54V54H70V12H88Z'/%3E%3C/svg%3E">
 <title>HALVES · Pare de depender da sorte da indicação</title>
 <meta name="description" content="Advogado e contador: um mês vem cheio, o outro vem vazio. O HALVES monta uma entrada de clientes que não depende da indicação, e sem você virar vendedor.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="img/victor-hero.webp" fetchpriority="high">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;600;700&display=swap"></noscript>
 <style>
   :root{
     --vinho:#2A0E16; --vinho2:#3D1520; --vinho-hover:#210a11; --verde:#1f9d55; --verde-hover:#178a48;
@@ -26,11 +29,6 @@
 
   .topbar{ background:var(--vinho); color:var(--bg); text-align:center; font-size:.86rem; font-weight:600; padding:11px 16px; line-height:1.35; }
 
-  .nav{ display:flex; align-items:center; justify-content:space-between; padding:20px 0; position:relative; z-index:3; }
-  .nav .brand{ display:flex; align-items:center; gap:10px; }
-  .nav .brand svg{ width:28px; height:28px; }
-  .nav .brand span{ font-family:"Chakra Petch",sans-serif; font-weight:700; letter-spacing:.14em; font-size:16px; }
-  .nav .navcta{ font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:12.5px; letter-spacing:.03em; text-decoration:none; padding:9px 16px; border-radius:0; }
 
   /* HERO com imagem de fundo */
   .hero{ position:relative; overflow:hidden; min-height:100vh; min-height:100dvh; display:flex; align-items:center;
@@ -58,18 +56,12 @@
   .btn-wpp{ border-radius:10px; }
   .hero .btn{ box-shadow:0 6px 20px rgba(0,0,0,.3); }
   .hero .btn:hover{ box-shadow:0 10px 28px rgba(0,0,0,.4); }
-  .hero .brand span{ color:#fff; }
 
   section.block{ padding:8vh 0; border-top:1px solid var(--line); }
   .block h2{ font-size:clamp(1.42rem,2.7vw,2.1rem); font-weight:700; margin-bottom:24px; max-width:22ch; }
   .block p{ font-size:clamp(1rem,1.5vw,1.12rem); color:var(--muted); max-width:60ch; margin-bottom:18px; }
   .block p b{ color:var(--ink); font-weight:600; }
-  .quote{ font-family:"Fraunces",serif; font-size:clamp(1.5rem,2.8vw,2.15rem); line-height:1.35; color:var(--vinho); max-width:24ch; font-weight:600; margin-bottom:34px; }
 
-  /* imagem 1920x1080 dentro de seção de texto */
-  .secimg{ margin-top:34px; }
-  .secimg img{ width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
-  .secimg .ph{ width:100%; aspect-ratio:16/9; background:linear-gradient(135deg,var(--bg2),#e3d4cc); display:flex; align-items:center; justify-content:center; color:var(--muted); font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; border:1px dashed var(--line); }
 
   /* seção de tópicos + imagem (fundo claro, estilo holdingmasters) */
   .topicsec .grid{ display:grid; grid-template-columns:1fr 400px; gap:64px; align-items:stretch; }
@@ -80,35 +72,14 @@
   .topicsec .col-txt{ align-self:center; padding:12px 0; }
   .topicsec .col-img{ position:relative; min-height:460px; margin:0 18px 18px 0; }
   .topicsec .col-img::before{ content:""; position:absolute; top:18px; left:18px; right:-18px; bottom:-18px; background:var(--vinho); }
-  .topicsec .col-img .ph{ width:100%; aspect-ratio:9/16; background:linear-gradient(135deg,var(--bg2),#e3d4cc); display:flex; align-items:center; justify-content:center; color:var(--muted); font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; border:1px dashed var(--line); }
   .topicsec .col-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
 
-  /* cena: mês cheio x mês vazio */
-  .scene{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:36px; }
-  .scene .card{ background:var(--card); border:1px solid var(--line); border-radius:0; padding:26px 24px; }
-  .scene .card .lbl{ font-family:"Chakra Petch",sans-serif; font-size:12px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; }
-  .scene .card.a .lbl{ color:#2e7d32; }
-  .scene .card.b .lbl{ color:#b5382e; }
-  .scene .card h3{ font-size:1.05rem; margin-bottom:8px; }
-  .scene .card p{ font-size:.95rem; margin:0; }
 
   /* O QUE MUDA — tópicos à esquerda + imagem à direita (estilo holdingmasters) */
   .change{ background:var(--vinho); color:var(--bg); border-top:0; min-height:100vh; min-height:100dvh; display:flex; align-items:center; }
   .change > .wrap{ width:100%; }
-  .change .grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
   .change .pill{ display:inline-block; font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:#d9b9bf; padding:0 0 10px; border-bottom:2px solid rgba(243,233,228,.28); margin-bottom:22px; }
   .change h2{ color:#fff; font-size:clamp(1.5rem,3vw,2.25rem); max-width:18ch; margin-bottom:18px; }
-  .change > .wrap > .grid > .col-txt > p{ color:#e6d3d7; max-width:none; }
-  .change > .wrap > .grid > .col-txt > p b{ color:#fff; }
-  .change .topics{ list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:24px; }
-  .change .topics li{ position:relative; padding-left:34px; color:#f0e2e6; font-size:1.02rem; line-height:1.5; }
-  .change .topics li::before{ content:""; position:absolute; left:0; top:2px; width:22px; height:22px; border-radius:0; background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232A0E16' stroke-width='3'%3E%3Cpath d='M5 12l5 5L20 6'/%3E%3C/svg%3E") center/13px no-repeat; }
-  .change .topics li b{ color:#fff; }
-  .change .col-img{ position:relative; }
-  .change .col-img img{ width:100%; height:auto; border-radius:0; display:block; box-shadow:0 24px 60px rgba(0,0,0,.4); }
-  .change .col-img .ph{ width:100%; aspect-ratio:16/9; border-radius:0; background:linear-gradient(160deg,#3D1520,#5a2532); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:#d9b9bf; border:1px dashed rgba(243,233,228,.3); text-align:center; padding:24px; }
-  .change .col-img .ph .ico{ font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:13px; letter-spacing:.16em; }
-  .change .col-img .ph small{ font-size:.78rem; opacity:.8; }
 
   /* CARROSSEL DE PASSOS (setas, infinito) */
   .steps-intro{ max-width:640px; margin-bottom:40px; }
@@ -205,20 +176,15 @@
   footer .fbase{ border-top:1px solid rgba(243,233,228,.14); margin-top:26px; padding-top:20px; font-size:.78rem; color:#a98b91; }
 
   @media (max-width:820px){
-    .scene, .who, .tried{ grid-template-columns:1fr; }
+    .tried{ grid-template-columns:1fr; }
     .hero h1{ max-width:none; }
-    .change .grid, .topicsec .grid{ grid-template-columns:1fr; gap:32px; }
+    .topicsec .grid{ grid-template-columns:1fr; gap:32px; }
     .topicsec .col-img{ min-height:0; aspect-ratio:4/5; margin-right:12px; }
     .topicsec .col-img::before{ top:12px; left:12px; right:-12px; bottom:-12px; }
-    .change .col-img{ order:-1; }
-    .change .col-img .ph{ aspect-ratio:16/10; }
   }
   @media (max-width:560px){
     .wrap{ padding:0 18px; }
     .topbar{ font-size:.78rem; padding:10px 14px; }
-    .nav .navcta{ display:none; }
-    .nav{ padding:16px 0; justify-content:flex-start; }
-    .nav .brand span{ letter-spacing:.1em; font-size:15px; }
 
     .hero{ min-height:auto; display:block;
       background-color:var(--vinho); background-image:url("img/victor-hero.webp"); background-repeat:no-repeat; background-position:78% top; background-size:auto 46vh; }
@@ -232,11 +198,10 @@
 
     section.block{ padding:6vh 0; }
     .change{ min-height:auto; display:block; padding:8vh 0; }
-    .block h2, .quote{ font-size:1.45rem; }
+    .block h2{ font-size:1.45rem; }
     .block h2{ margin-bottom:18px; }
-    .quote{ margin-bottom:24px; }
     .btn{ width:100%; text-align:center; }
-        .scene .card, .tried .col{ padding:24px 20px; }
+    .tried .col{ padding:24px 20px; }
     .steps .slide{ flex-basis:84%; padding:28px 22px 30px; }
     .steps .slide .num{ font-size:2.6rem; margin-bottom:18px; }
     .steps .slide h3{ font-size:1.25rem; }
@@ -262,7 +227,7 @@
 <header class="hero">
   <div class="wrap">
     <div class="hero-inner">
-      <img class="herologo" src="img/halves-logo.webp" alt="HALVES" width="240" height="52">
+      <img class="herologo" src="img/halves-logo.webp" srcset="img/halves-logo-240.webp 240w, img/halves-logo.webp 480w" sizes="(max-width:560px) 180px, 240px" alt="HALVES" width="240" height="52" fetchpriority="high">
       <h1>Um mês vem cheio. O outro vem vazio.</h1>
       <p class="sub">E você não sabe o motivo. Sua agenda de clientes depende da indicação, e a indicação chega quando quer. <b>O HALVES monta uma entrada de clientes que não depende da sorte, e sem você virar vendedor.</b></p>
       <div class="proof">
@@ -280,6 +245,8 @@
   </div>
 </header>
 
+<main>
+
 <!-- O PROBLEMA: a montanha-russa (tópicos + imagem) -->
 <section class="block topicsec">
   <div class="wrap">
@@ -294,7 +261,7 @@
       </ul>
       </div>
       <div class="col-img">
-        <img src="img/problema.webp" alt="Advogado no escritório olhando o celular parado, com a agenda do mês quase vazia na parede" width="941" height="1672" loading="lazy" decoding="async">
+        <img src="img/problema.webp" srcset="img/problema-480.webp 480w, img/problema.webp 800w" sizes="(max-width:820px) 92vw, 400px" alt="Advogado no escritório olhando o celular parado, com a agenda do mês quase vazia na parede" width="800" height="1421" loading="lazy" decoding="async">
       </div>
     </div>
   </div>
@@ -415,6 +382,7 @@
     <button type="button" class="btn btn-wpp" data-open-form>Me chama no WhatsApp</button>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="wrap">
