@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://halves.com.br/sitemap.xml
