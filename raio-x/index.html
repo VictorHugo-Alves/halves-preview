@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2A0E16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232A0E16'/%3E%3Cpath fill='%23F3E9E4' d='M12 12H46V46H30V88H12Z'/%3E%3Cpath fill='%23F3E9E4' d='M88 88H54V54H70V12H88Z'/%3E%3C/svg%3E">
+<title>HALVES · Raio-X de onde vem o seu cliente</title>
+<link rel="canonical" href="https://halves.com.br/raio-x/">
+<meta name="description" content="Peça o Raio-X do seu escritório: o que já funciona, o que trava e 3 oportunidades, com dados públicos. Chega no seu WhatsApp em até 1 dia útil.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;600;700&display=swap"></noscript>
+<style>
+  :root{
+    --vinho:#2A0E16; --vinho2:#3D1520; --verde:#1f9d55; --verde-hover:#178a48;
+    --bg:#F6F1ED; --bg2:#efe7e0; --ink:#231015; --muted:#6f5a5f; --line:#e2d6cf; --card:#fff; --erro:#C0392B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{ -webkit-text-size-adjust:100%; }
+  body{ background:var(--bg) url("../img/textura.webp") center top / 620px repeat; color:var(--ink); font-family:"Inter",system-ui,sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden; min-height:100vh; min-height:100dvh; }
+
+  .rx{ min-height:100vh; min-height:100dvh; display:grid; grid-template-columns:1fr; }
+  /* topo vinho: logo, título e apoio */
+  .rx-topo{ background:var(--vinho); color:#e6d3d7; padding:22px 18px 30px; }
+  .rx-topo .in{ max-width:520px; margin:0 auto; }
+  .rx-logo{ display:block; width:150px; height:auto; margin-bottom:22px; }
+  .rx-selo{ display:inline-block; font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#d9b9bf; padding-bottom:8px; border-bottom:2px solid rgba(243,233,228,.28); margin-bottom:14px; }
+  .rx h1{ font-family:"Chakra Petch",sans-serif; font-weight:700; color:#fff; font-size:1.62rem; line-height:1.16; letter-spacing:-.01em; text-wrap:balance; margin-bottom:12px; }
+  .rx-apoio{ font-size:.98rem; color:#e6d3d7; max-width:46ch; }
+  .rx-apoio b{ color:#fff; font-weight:600; }
+
+  /* formulário */
+  .rx-form-col{ padding:0 14px 32px; }
+  .leadForm{ background:var(--card); border:1px solid var(--line); max-width:520px; margin:-14px auto 0; padding:24px 18px 22px; box-shadow:0 18px 50px rgba(42,14,22,.12); position:relative; }
+  .form-group{ margin-bottom:14px; }
+  .form-group > label, .form-group > .rot{ display:block; font-size:.84rem; font-weight:600; color:var(--vinho); margin-bottom:6px; }
+  .form-group .opc{ font-weight:400; color:var(--muted); }
+  .form-group input{ width:100%; padding:13px 14px; border-radius:0; border:1.5px solid var(--line); font-size:16px; background:#fff; color:var(--ink); font-family:inherit; transition:border-color .2s, box-shadow .2s; outline:none; }
+  .form-group input::placeholder{ color:#a08e93; }
+  .form-group input:focus{ border-color:var(--vinho); box-shadow:0 0 0 3px rgba(42,14,22,.1); }
+  .form-group .dica{ display:block; font-size:.76rem; color:var(--muted); margin-top:5px; }
+  .form-group .msg{ display:none; font-size:.78rem; color:var(--erro); margin-top:5px; }
+  .form-group.err input{ border-color:var(--erro); box-shadow:0 0 0 3px rgba(192,57,43,.12); }
+  .form-group.err .msg{ display:block; }
+  .form-group.err .dica{ display:none; }
+  .linha2{ display:grid; grid-template-columns:1.25fr 1fr; gap:10px; }
+
+  /* advogado ou contador: dois botões */
+  .perfil{ display:grid; grid-template-columns:1fr 1fr; gap:8px; border:0; }
+  .perfil legend{ font-size:.84rem; font-weight:600; color:var(--vinho); margin-bottom:6px; padding:0; }
+  .perfil input{ position:absolute; opacity:0; width:1px; height:1px; }
+  .perfil label{ display:flex; align-items:center; justify-content:center; min-height:48px; padding:10px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-weight:600; font-size:.95rem; color:var(--ink); transition:.15s; user-select:none; }
+  .perfil input:checked + label{ border-color:var(--vinho); background:var(--vinho); color:#fff; }
+  .perfil input:focus-visible + label{ outline:2px solid var(--vinho); outline-offset:2px; }
+  .form-group.err .perfil label{ border-color:var(--erro); }
+
+  /* @ do Instagram com o @ fixo na frente */
+  .com-arroba{ position:relative; }
+  .com-arroba span{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:600; pointer-events:none; }
+  .com-arroba input{ padding-left:34px !important; }
+
+  .btn{ display:block; width:100%; padding:17px 22px; border:0; border-radius:10px; cursor:pointer; background:var(--verde); color:#fff; font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:16px; letter-spacing:.03em; text-align:center; text-decoration:none; transition:background .2s, transform .2s, box-shadow .2s; margin-top:6px; }
+  .btn:hover{ background:var(--verde-hover); transform:translateY(-1px); box-shadow:0 8px 22px rgba(23,138,72,.3); }
+  .btn[disabled]{ opacity:.7; cursor:wait; transform:none; box-shadow:none; }
+  .prazo{ font-size:.84rem; color:var(--ink); text-align:center; margin-top:12px; font-weight:600; }
+  .fnote{ font-size:.76rem; color:var(--muted); text-align:center; margin-top:8px; line-height:1.45; }
+  .fnote a{ color:var(--vinho); }
+  .falha{ display:none; margin-top:14px; padding:14px; background:#fbeeee; border:1px solid #efc9c5; font-size:.88rem; color:#7a1f17; }
+  .falha.on{ display:block; }
+  .falha a{ color:#7a1f17; font-weight:700; }
+  /* honeypot: fora da tela e fora do leitor de tela; humano não vê, robô preenche */
+  .hp{ position:absolute !important; left:-10000px !important; top:auto; width:1px; height:1px; overflow:hidden; }
+
+  .rx-rodape{ text-align:center; font-size:.74rem; color:var(--muted); padding:0 18px 24px; }
+  .rx-rodape a{ color:var(--muted); }
+
+  /* WhatsApp com país (intl-tel-input, mesmo padrão da página principal) */
+  .iti, .iti--detached-country-selector{
+    --iti-hover-color:rgba(42,14,22,.07); --iti-border-color:var(--line); --iti-icon-color:var(--vinho);
+    --iti-country-selector-bg:#fff; --iti-spacer-horizontal:12px; --iti-arrow-padding:8px; --iti-flag-width:22px;
+  }
+  .form-group .iti{ display:block; width:100%; }
+  .leadForm .iti__country-container{ padding:1.5px; }
+  .leadForm .iti__selected-country{ font-family:"Inter",system-ui,sans-serif; }
+  .leadForm .iti__selected-country-primary{ background:var(--bg); border-right:1.5px solid var(--line); }
+  .leadForm .iti__selected-dial-code{ margin-left:0; padding:0 4px 0 10px; font-weight:600; color:var(--vinho); }
+  .leadForm .iti__selected-country[aria-expanded=true] .iti__selected-country-primary{ background:var(--bg2); }
+  .leadForm .iti__selected-country:focus-visible{ outline:2px solid var(--vinho); outline-offset:-2px; }
+  body .iti__flag{ border-radius:0; box-shadow:0 0 0 1px rgba(42,14,22,.12); }
+  body .iti__country-selector{ border-radius:0; font-family:"Inter",system-ui,sans-serif; color:var(--ink); }
+  body .iti--inline-country-selector .iti__country-selector{ border:1.5px solid var(--vinho); box-shadow:0 18px 40px rgba(42,14,22,.22); margin-top:2px; }
+  body .iti--inline-country-selector .iti__country-list{ max-height:230px; }
+  body .iti__search-input-wrapper{ border-bottom:1.5px solid var(--line); background:var(--bg); }
+  body .iti__search-input{ font-family:inherit; font-size:16px; color:var(--ink); background:transparent; outline:none; border-radius:0; padding-top:12px; padding-bottom:12px; }
+  body .iti__search-input::placeholder{ color:var(--muted); }
+  body .iti__country{ font-size:.95rem; padding-top:10px; padding-bottom:10px; }
+  body .iti__country.iti__highlight{ background:rgba(42,14,22,.07); }
+  body .iti__country[aria-selected=true] .iti__country-name{ font-weight:600; color:var(--vinho); }
+  body .iti__dial-code{ color:var(--muted); font-variant-numeric:tabular-nums; }
+  body .iti__country-check{ color:var(--vinho); }
+  body .iti__no-results{ color:var(--muted); font-size:.92rem; }
+  body .iti--fullscreen-popup.iti--detached-country-selector{ background:rgba(20,6,10,.82); backdrop-filter:blur(3px); padding:56px 16px 16px; z-index:1060; }
+  body .iti--fullscreen-popup .iti__country-selector{ border:0; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+  body .iti--fullscreen-popup .iti__close-button{ right:0; color:#F3E9E4; }
+  body .iti--fullscreen-popup .iti__country{ padding:12px 14px; }
+
+  /* desktop: vinho à esquerda, formulário à direita, tudo numa dobra */
+  @media (min-width:900px){
+    .rx{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+    .rx-topo{ display:flex; align-items:center; padding:48px 56px; }
+    .rx-topo .in{ max-width:520px; margin:0 0 0 auto; width:100%; }
+    .rx-logo{ width:200px; margin-bottom:40px; }
+    .rx h1{ font-size:clamp(2rem,2.9vw,2.6rem); margin-bottom:16px; }
+    .rx-apoio{ font-size:1.08rem; }
+    .rx-form-col{ display:flex; flex-direction:column; justify-content:center; padding:24px 56px; }
+    .leadForm{ margin:0; width:100%; max-width:460px; padding:24px 28px 20px; }
+    .form-group{ margin-bottom:11px; }
+    .form-group input{ padding:11px 14px; }
+    .perfil label{ min-height:44px; }
+    .rx-rodape{ text-align:left; padding:16px 0 0; max-width:460px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="rx">
+  <header class="rx-topo">
+    <div class="in">
+      <img class="rx-logo" src="../img/halves-logo.webp" srcset="../img/halves-logo-240.webp 240w, ../img/halves-logo.webp 480w" sizes="(min-width:900px) 200px, 150px" alt="HALVES" width="240" height="52" fetchpriority="high">
+      <span class="rx-selo">Raio-X de onde vem o seu cliente</span>
+      <h1>Veja o que o cliente encontra quando procura o seu escritório.</h1>
+      <p class="rx-apoio">A gente olha o seu Google, o seu Instagram e o seu site, só com dados públicos. <b>Você recebe no WhatsApp o que já funciona, o que trava e 3 oportunidades.</b></p>
+    </div>
+  </header>
+
+  <div class="rx-form-col">
+    <form id="leadForm" class="leadForm" novalidate>
+      <div class="form-group" id="f-nome">
+        <label for="FNAME">Seu nome</label>
+        <input id="FNAME" name="nome" type="text" placeholder="Nome e sobrenome" autocomplete="name" maxlength="120" required>
+        <span class="msg">Escreva o seu nome.</span>
+      </div>
+      <div class="form-group" id="f-tel">
+        <label for="PHONE">Seu WhatsApp</label>
+        <input id="PHONE" name="whatsapp" type="tel" placeholder="(21) 99999-9999" inputmode="tel" autocomplete="tel" aria-describedby="tel-msg" required>
+        <span class="msg" id="tel-msg" aria-live="polite">Informe seu WhatsApp com DDD.</span>
+      </div>
+      <div class="form-group" id="f-perfil">
+        <fieldset class="perfil">
+          <legend>Você é</legend>
+          <input type="radio" id="P-ADV" name="perfil" value="Advogado"><label for="P-ADV">Advogado</label>
+          <input type="radio" id="P-CONT" name="perfil" value="Contador"><label for="P-CONT">Contador</label>
+        </fieldset>
+        <span class="msg">Escolha uma opção.</span>
+      </div>
+      <div class="form-group" id="f-esc">
+        <label for="ESC">Nome do escritório</label>
+        <input id="ESC" name="escritorio" type="text" placeholder="Como ele aparece no Google" autocomplete="organization" maxlength="120" required>
+        <span class="msg">Escreva o nome do escritório.</span>
+      </div>
+      <div class="linha2">
+        <div class="form-group" id="f-cidade">
+          <label for="CIDADE">Cidade</label>
+          <input id="CIDADE" name="cidade" type="text" placeholder="Rio de Janeiro" autocomplete="address-level2" maxlength="80" required>
+          <span class="msg">Escreva a cidade.</span>
+        </div>
+        <div class="form-group" id="f-bairro">
+          <label for="BAIRRO">Bairro <span class="opc">(opcional)</span></label>
+          <input id="BAIRRO" name="bairro" type="text" placeholder="Centro" autocomplete="address-level3" maxlength="80">
+          <span class="msg">Bairro muito curto.</span>
+        </div>
+      </div>
+      <div class="form-group" id="f-ig">
+        <label for="IG">Instagram do escritório <span class="opc">(opcional)</span></label>
+        <div class="com-arroba"><span aria-hidden="true">@</span><input id="IG" name="instagram" type="text" placeholder="seuescritorio" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="200" aria-describedby="ig-dica"></div>
+        <span class="dica" id="ig-dica">Só o nome do perfil. Também vale colar o link.</span>
+        <span class="msg">Esse @ não parece um perfil do Instagram. Confere.</span>
+      </div>
+      <div class="form-group" id="f-siteesc">
+        <label for="SITEESC">Site <span class="opc">(opcional)</span></label>
+        <input id="SITEESC" name="site_escritorio" type="text" inputmode="url" placeholder="seuescritorio.com.br" autocomplete="url" autocapitalize="none" spellcheck="false" maxlength="300">
+        <span class="msg">Esse site não parece um endereço. Confere.</span>
+      </div>
+      <div class="hp" aria-hidden="true">
+        <label for="SITE">Seu site</label>
+        <input id="SITE" name="site" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <button type="submit" id="cta" class="btn">Quero meu Raio-X</button>
+      <p class="prazo">Chega no seu WhatsApp em até 1 dia útil.</p>
+      <p class="fnote">Ao enviar, você concorda com a <a href="../politica-de-privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. Seus dados são usados só para fazer o seu Raio-X e falar com você.</p>
+      <div class="falha" id="falha" role="alert"></div>
+    </form>
+    <p class="rx-rodape">© 2026 HALVES · <a href="../">halves.com.br</a></p>
+  </div>
+</main>
+
+<script>
+  /* ---- CONFIGURAÇÃO (mesmo CRM, planilha e WhatsApp da página principal) ---- */
+  var CONFIG = {
+    PLANILHA_URL: 'https://script.google.com/macros/s/AKfycbwT2uodnKqNECF2BlGBXm5ainAEwc0QAlnvf2QmZyL_yPo8vhHvCu9w6ogYeBodE_o/exec',
+    WHATSAPP: '5521984147640',  // provisório: número pessoal do Victor até a HALVES ter o dela
+    /* CRM (Supabase). A chave publishable é pública por natureza: só executa a RPC capturar_lead. */
+    SUPABASE_URL: 'https://yjmuwpkvoexunkjcafgv.supabase.co',
+    SUPABASE_KEY: 'sb_publishable_evVh_bIikrP4SMP16OMmsw_5UqqDWLV',
+    ENVIO_TIMEOUT_MS: 8000,
+    OBRIGADO: 'obrigado/',
+    ITI: 'https://cdn.jsdelivr.net/npm/intl-tel-input@29.5.3/dist',
+    ITI_JS_SRI: 'sha384-1k5t9CQZrBJeWjMvg0TBTlVboAUK8rjnCB32B82h3uEU1PJjbPEvC9nLAZZPqDLl',
+    ITI_CSS_SRI: 'sha384-khdvUrzJNN6Jw9yHboN6430RRijNf+nAlKcZv0a5IrkTjwZpwgJ9fzD3kjbqhOyZ'
+  };
+
+  /* UTMs da chegada (o link curto do direct manda source, medium e campaign do post) */
+  var UTM = (function(){
+    var q = new URLSearchParams(location.search), o = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){ o[k] = q.get(k) || ''; });
+    return o;
+  })();
+
+  function $(id){ return document.getElementById(id); }
+  var tel = $('PHONE'), telMsg = $('tel-msg');
+  var iti = null, itiCarga = null;
+
+  /* intl-tel-input: aqui o formulário já está na tela, então carrega logo; o utils (~260 KB) só sob demanda */
+  function carregaTel(){
+    if(itiCarga) return itiCarga;
+    itiCarga = new Promise(function(ok, falha){
+      var css = document.createElement('link');
+      css.rel = 'stylesheet'; css.href = CONFIG.ITI + '/css/intlTelInput.min.css';
+      css.integrity = CONFIG.ITI_CSS_SRI; css.crossOrigin = 'anonymous';
+      document.head.appendChild(css);
+      var js = document.createElement('script');
+      js.src = CONFIG.ITI + '/js/intlTelInput.min.js';
+      js.integrity = CONFIG.ITI_JS_SRI; js.crossOrigin = 'anonymous';
+      js.onload = ok; js.onerror = falha;
+      document.head.appendChild(js);
+    }).then(iniciaTel).catch(function(){ itiCarga = null; });
+    return itiCarga;
+  }
+  function iniciaTel(){
+    if(iti || !window.intlTelInput) return;
+    iti = window.intlTelInput(tel, {
+      initialCountry: 'br',
+      separateDialCode: true,
+      countryOrder: ['br','pt','us'],
+      countryNameLocale: 'pt-BR',
+      countryNameOverrides: { us: 'Estados Unidos (EUA)' },
+      countrySearch: true,
+      dropdownParent: document.body,
+      formatAsYouType: true,
+      placeholderNumberPolicy: 'AGGRESSIVE',
+      placeholderNumberType: 'MOBILE',
+      uiTranslations: {
+        selectedCountryAriaLabel: 'País do WhatsApp: ${countryName} (${dialCode}). Trocar país',
+        noCountrySelected: 'Escolha o país do WhatsApp',
+        countryListAriaLabel: 'Lista de países',
+        searchPlaceholder: 'Buscar país',
+        clearSearchAriaLabel: 'Limpar busca',
+        closeCountrySelectorAriaLabel: 'Fechar',
+        searchEmptyState: 'Nenhum país com esse nome',
+        searchSummaryAria: function(n){ return n === 1 ? '1 país encontrado' : n + ' países encontrados'; }
+      },
+      loadUtils: function(){ return import(CONFIG.ITI + '/js/utils.js'); }
+    });
+    tel.addEventListener('countrychange', function(){ setErr('f-tel', false); });
+  }
+  /* já abre a conexão com o CRM e carrega o seletor de país sem travar a primeira pintura */
+  (function(){
+    var pc = document.createElement('link');
+    pc.rel = 'preconnect'; pc.href = CONFIG.SUPABASE_URL; pc.crossOrigin = 'anonymous';
+    document.head.appendChild(pc);
+    if('requestIdleCallback' in window) requestIdleCallback(carregaTel, { timeout: 1500 }); else setTimeout(carregaTel, 300);
+    tel.addEventListener('focus', carregaTel, { once:true });
+  })();
+
+  function paisAtual(){ return iti ? ((iti.getSelectedCountry() || {}).iso2 || '') : 'br'; }
+  /* Brasil: o +55 já está no seletor. Se a pessoa digitar ou colar o 55 de novo, ele sai (12 ou 13 dígitos). */
+  function semDDI(d){ return paisAtual() === 'br' && d.length >= 12 && d.indexOf('55') === 0; }
+  tel.addEventListener('keydown', function(e){
+    if(!iti || !/^[0-9]$/.test(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if(this.selectionStart !== this.value.length) return;
+    var novo = this.value.replace(/\D/g,'') + e.key;
+    if(!semDDI(novo)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    iti.setNumber('+' + novo);
+  });
+  tel.addEventListener('paste', function(e){
+    if(!iti) return;
+    var txt = (e.clipboardData && e.clipboardData.getData('text')) || '';
+    var d = txt.replace(/\D/g,'');
+    if(!d || this.value.replace(/\D/g,'')) return;
+    if(semDDI(d) || /^\s*(\+|00)/.test(txt)){
+      e.preventDefault(); e.stopImmediatePropagation();
+      iti.setNumber('+' + d.replace(/^00/, ''));
+      this.dispatchEvent(new Event('input', { bubbles:true }));
+    }
+  });
+  tel.addEventListener('input', function(){
+    if(paisAtual() !== 'br') return;
+    var d = this.value.replace(/\D/g,'');
+    if(semDDI(d)){
+      if(iti){ iti.setNumber('+' + d); return; }
+      d = d.slice(2); this.value = d;
+    }
+    if(iti) return;
+    /* sem a biblioteca (CDN fora): máscara brasileira simples */
+    d = d.slice(0,11);
+    if(d.length===0){ this.value=''; return; }
+    if(d.length<=2){ this.value='('+d; return; }
+    if(d.length<=7){ this.value='('+d.slice(0,2)+') '+d.slice(2); return; }
+    this.value='('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
+  });
+  function leTelefone(){
+    var d = tel.value.replace(/\D/g,'');
+    var pais = paisAtual();
+    if(!d) return { erro: 'Informe seu WhatsApp.' };
+    if(iti && window.intlTelInput.utils){
+      if(iti.isValidNumber()) return { e164: iti.getNumber('E164'), pais: pais.toUpperCase() };
+      var e = iti.getValidationError();
+      if(e === 'TOO_SHORT') return { erro: pais === 'br' ? 'Faltou dígito. Confere o DDD e o número.' : 'Faltou dígito. Confere o número.' };
+      if(e === 'TOO_LONG') return { erro: 'Sobrou dígito. Confere o número.' };
+      return { erro: 'Esse número não bate com o país escolhido. Confere a bandeira e o número.' };
+    }
+    if(pais === 'br'){
+      if(d.length < 10 || d.length > 11) return { erro: 'Confere o DDD e o número.' };
+      return { e164: '+55' + d, pais: 'BR' };
+    }
+    var dial = ((iti && iti.getSelectedCountry()) || {}).dialCode;
+    if(!dial || d.length < 6 || d.length > 14) return { erro: 'Confere o número e o país escolhido.' };
+    return { e164: '+' + dial + d, pais: pais.toUpperCase() };
+  }
+
+  /* Instagram: tira @, espaço e o link do perfil; sobra o usuário (mesma regra do banco, normaliza_instagram) */
+  function normalizaIG(v){
+    var u = String(v || '').replace(/\s/g,'').toLowerCase()
+      .replace(/^(https?:\/\/)?(www\.|m\.)?(instagram\.com|instagr\.am)\//, '')
+      .replace(/[\/?#].*$/, '').replace(/^@+/, '');
+    return u;
+  }
+  function igOk(u){ return /^[a-z0-9._]{1,30}$/.test(u); }
+  /* Site: sem https:// ganha; precisa ter domínio (mesma regra do banco, normaliza_site) */
+  function normalizaSite(v){
+    var s = String(v || '').trim();
+    if(!s) return '';
+    return /^https?:\/\//i.test(s) ? s : 'https://' + s;
+  }
+  function siteOk(s){ return s.length <= 500 && /^https?:\/\/[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}(:[0-9]{1,5})?([\/?#]\S*)?$/i.test(s); }
+  function limpo(v){ return String(v || '').replace(/[\u0000-\u001f\u007f]/g,'').replace(/\s+/g,' ').trim(); }
+
+  function setErr(id,on){ $(id).classList.toggle('err', on); }
+  [['FNAME','f-nome'],['PHONE','f-tel'],['ESC','f-esc'],['CIDADE','f-cidade'],['BAIRRO','f-bairro'],['IG','f-ig'],['SITEESC','f-siteesc']].forEach(function(p){
+    $(p[0]).addEventListener('input', function(){ setErr(p[1], false); });
+  });
+  document.querySelectorAll('input[name=perfil]').forEach(function(r){ r.addEventListener('change', function(){ setErr('f-perfil', false); }); });
+  /* mostra o @ limpo quando a pessoa sai do campo (colou o link, sai só o usuário) */
+  $('IG').addEventListener('blur', function(){ var u = normalizaIG(this.value); if(u && igOk(u)) this.value = u; });
+  $('SITEESC').addEventListener('blur', function(){ this.value = this.value.trim(); });
+
+  function comPrazo(url, opts){
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var t = ctrl ? setTimeout(function(){ ctrl.abort(); }, CONFIG.ENVIO_TIMEOUT_MS) : null;
+    if(ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function(){ clearTimeout(t); });
+  }
+  function enviaCRM(d, hp){
+    var corpo = {
+      p_nome: d.nome, p_email: null, p_whatsapp: d.whatsapp, p_pais: d.pais, p_perfil: d.perfil,
+      p_utm_source: d.utm_source, p_utm_medium: d.utm_medium, p_utm_campaign: d.utm_campaign,
+      p_utm_content: d.utm_content, p_utm_term: d.utm_term,
+      p_pagina: d.pagina, p_referrer: d.referrer, p_site: hp,
+      p_escritorio: d.escritorio, p_cidade: d.cidade, p_bairro: d.bairro || null,
+      p_instagram: d.instagram || null, p_site_escritorio: d.site_escritorio || null,
+      p_formulario: 'raio-x'
+    };
+    return comPrazo(CONFIG.SUPABASE_URL + '/rest/v1/rpc/capturar_lead', {
+      method:'POST', keepalive:true,
+      headers:{ 'apikey': CONFIG.SUPABASE_KEY, 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(corpo)
+    }).then(function(r){ return r.json(); }).catch(function(){ return null; });
+  }
+  /* planilha (backup, decisão do Victor): dispara e esquece, como na página principal */
+  function enviaPlanilha(d){
+    var corpo = JSON.stringify(d);
+    try{ if(navigator.sendBeacon && navigator.sendBeacon(CONFIG.PLANILHA_URL, new Blob([corpo], { type:'text/plain;charset=utf-8' }))) return; }catch(err){}
+    try{ fetch(CONFIG.PLANILHA_URL, { method:'POST', mode:'no-cors', keepalive:true, headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: corpo }).catch(function(){}); }catch(err){}
+  }
+
+  var form = $('leadForm');
+  var enviando = false;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(enviando) return;
+    var btn = $('cta');
+    var pronto = (iti && !window.intlTelInput.utils && iti.promise)
+      ? Promise.race([iti.promise.catch(function(){}), new Promise(function(r){ setTimeout(r, 3000); })])
+      : Promise.resolve();
+    btn.disabled = true;
+    pronto.then(function(){ btn.disabled = false; valida(btn); });
+  });
+
+  function valida(btn){
+    var ok = true, primeiro = null;
+    function erro(id, campo){ setErr(id, true); ok = false; if(!primeiro) primeiro = campo; }
+    var nome = limpo($('FNAME').value).slice(0,120);
+    if(nome.length < 2) erro('f-nome', $('FNAME'));
+    var t = leTelefone();
+    if(t.erro){ telMsg.textContent = t.erro; erro('f-tel', tel); }
+    var perfilEl = document.querySelector('input[name=perfil]:checked');
+    if(!perfilEl) erro('f-perfil', $('P-ADV'));
+    var esc = limpo($('ESC').value).slice(0,120);
+    if(esc.length < 2) erro('f-esc', $('ESC'));
+    var cidade = limpo($('CIDADE').value).slice(0,80);
+    if(cidade.length < 2) erro('f-cidade', $('CIDADE'));
+    var bairro = limpo($('BAIRRO').value).slice(0,80);
+    if(bairro && bairro.length < 2) erro('f-bairro', $('BAIRRO'));
+    var igBruto = $('IG').value.trim();
+    var ig = normalizaIG(igBruto);
+    if(igBruto && !igOk(ig)) erro('f-ig', $('IG'));
+    var site = normalizaSite($('SITEESC').value);
+    if(site && !siteOk(site)) erro('f-siteesc', $('SITEESC'));
+    if(!ok){ if(primeiro && primeiro.focus) primeiro.focus(); return; }
+
+    var hp = $('SITE').value;
+    var dados = {
+      nome: nome, email: '', whatsapp: t.e164, pais: t.pais, perfil: perfilEl.value,
+      escritorio: esc, cidade: cidade, bairro: bairro, instagram: ig, site_escritorio: site,
+      pagina: location.href.split('#')[0].slice(0,500),
+      referrer: document.referrer.slice(0,500)
+    };
+    for(var k in UTM){ dados[k] = UTM[k].slice(0,200); }
+
+    enviando = true;
+    btn.disabled = true; btn.textContent = 'Enviando...';
+    $('falha').classList.remove('on');
+
+    if(!hp) enviaPlanilha(dados);
+    enviaCRM(dados, hp).then(function(res){
+      if(res && res.ok === true){
+        /* só o primeiro nome vai para a página de obrigado, e nunca pela URL */
+        try{ sessionStorage.setItem('halves_raiox_nome', nome.split(' ')[0].slice(0,40)); }catch(err){}
+        location.replace(CONFIG.OBRIGADO + (location.search || ''));
+        return;
+      }
+      enviando = false;
+      btn.disabled = false; btn.textContent = 'Quero meu Raio-X';
+      var msg = 'Oi, Victor! Sou ' + nome + ', do escritório ' + esc + ' (' + cidade + '). Quero o Raio-X, mas o formulário não foi.';
+      var wa = 'https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg);
+      var f = $('falha');
+      f.innerHTML = (res && res.erro === 'limite'
+        ? 'Muitos envios seguidos deste aparelho. Espera uns minutos e tenta de novo, ou '
+        : 'Não consegui registrar o seu pedido agora. Tenta de novo em instantes, ou ')
+        + '<a href="' + wa + '">chama o Victor no WhatsApp</a>.';
+      f.classList.add('on');
+    });
+  }
+</script>
+
+</body>
+</html>

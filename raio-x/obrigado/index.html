@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2A0E16">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232A0E16'/%3E%3Cpath fill='%23F3E9E4' d='M12 12H46V46H30V88H12Z'/%3E%3Cpath fill='%23F3E9E4' d='M88 88H54V54H70V12H88Z'/%3E%3C/svg%3E">
+<title>HALVES · Raio-X pedido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{ background:#2A0E16; color:#e6d3d7; font-family:"Inter",system-ui,sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased; min-height:100vh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px 18px; }
+  .ok{ max-width:440px; width:100%; text-align:center; }
+  .ok img{ width:150px; height:auto; display:block; margin:0 auto 34px; }
+  .ok h1{ font-family:"Chakra Petch",sans-serif; font-weight:700; color:#fff; font-size:2rem; line-height:1.15; margin-bottom:12px; }
+  .ok p{ font-size:1.05rem; color:#e6d3d7; margin-bottom:26px; }
+  .ok p b{ color:#fff; font-weight:600; }
+  .btn{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:17px 22px; border-radius:10px; background:#1f9d55; color:#fff; font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:16px; letter-spacing:.03em; text-decoration:none; transition:background .2s; }
+  .btn:hover{ background:#178a48; }
+  .btn svg{ width:20px; height:20px; flex:0 0 auto; }
+  .aviso{ font-size:.84rem; color:#c7a9ae; margin-top:14px; min-height:1.3em; }
+</style>
+</head>
+<body>
+<main class="ok">
+  <img src="../../img/halves-logo.webp" srcset="../../img/halves-logo-240.webp 240w, ../../img/halves-logo.webp 480w" sizes="150px" alt="HALVES" width="240" height="52">
+  <h1 id="titulo">Recebido.</h1>
+  <p>Seu Raio-X chega no seu WhatsApp <b>em até 1 dia útil</b>.</p>
+  <a class="btn" id="wpp" href="https://wa.me/5521984147640" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.05 21.79h-.01a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 01-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 012.89 6.99c0 5.45-4.44 9.88-9.88 9.88zm8.41-18.3A11.82 11.82 0 0012.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 005.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.42z"/></svg>
+    <span>Falar com o Victor no WhatsApp</span>
+  </a>
+  <p class="aviso" id="aviso" aria-live="polite">Abrindo o seu WhatsApp...</p>
+</main>
+
+<script>
+/* Obrigado com ida ao WhatsApp por interação (padrão em Skills/sistema-paginas-junior/paginas/snippets/obrigado/obrigado-whatsapp.md).
+   Qualquer gesto da pessoa (toque, clique, rolagem, tecla, voltar) leva ao WhatsApp na hora; sem gesto, vai sozinho em 3 s.
+   Uma ida só por sessão: quem volta do WhatsApp fica aqui, com o botão. ?ficar=1 desliga a ida automática (teste e captura de tela). */
+(function(){
+  var NUMERO = '5521984147640';               // provisório: número pessoal do Victor, igual à página principal
+  var ESPERA_MS = 3000;
+  var CHAVE = 'halves_raiox_wpp_aberto';
+
+  var nome = '';
+  try{ nome = (sessionStorage.getItem('halves_raiox_nome') || '').replace(/[^\p{L}\p{M}' -]/gu, '').slice(0,40); }catch(e){}
+  if(nome) document.getElementById('titulo').textContent = 'Recebido, ' + nome + '.';
+  var texto = 'Oi, Victor! ' + (nome ? 'Sou ' + nome + '. ' : '') + 'Acabei de pedir o Raio-X do meu escritório pela página da HALVES.';
+  var destino = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(texto);
+  var botao = document.getElementById('wpp');
+  botao.href = destino;
+
+  var ficar = /(^|[?&])ficar=1(&|$)/.test(location.search);
+  var jaFoi = false;
+  try{ jaFoi = sessionStorage.getItem(CHAVE) === '1'; }catch(e){}
+  var aviso = document.getElementById('aviso');
+  if(ficar || jaFoi){ aviso.textContent = 'Toque no botão para abrir o WhatsApp.'; return; }
+
+  var foi = false, timer = null;
+  var EVENTOS = ['pointerdown','touchstart','touchmove','click','wheel','scroll','keydown'];
+  function ir(){
+    if(foi) return;                            // guarda: dispara uma vez só
+    foi = true;
+    clearTimeout(timer);
+    EVENTOS.forEach(function(ev){ window.removeEventListener(ev, ir, true); });
+    try{ sessionStorage.setItem(CHAVE, '1'); }catch(e){}
+    location.href = destino;
+  }
+
+  EVENTOS.forEach(function(ev){ window.addEventListener(ev, ir, { capture:true, passive:true }); });
+  /* voltar (botão ou gesto de deslizar): uma entrada a mais no histórico; o "voltar" cai aqui e vai ao WhatsApp */
+  try{
+    history.pushState({ halvesObrigado: 1 }, '', location.href);
+    window.addEventListener('popstate', ir);
+  }catch(e){}
+  /* trocou de aba ou de app: tentativa (o navegador pode ignorar navegação com a página escondida) */
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') ir(); });
+  window.addEventListener('pagehide', ir);
+  /* garantia: sem gesto nenhum, vai sozinho */
+  timer = setTimeout(ir, ESPERA_MS);
+})();
+</script>
+</body>
+</html>
