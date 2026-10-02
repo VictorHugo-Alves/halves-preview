@@ -147,14 +147,6 @@
         <input id="PHONE" name="whatsapp" type="tel" placeholder="(21) 99999-9999" inputmode="tel" autocomplete="tel" aria-describedby="tel-msg" required>
         <span class="msg" id="tel-msg" aria-live="polite">Informe seu WhatsApp com DDD.</span>
       </div>
-      <div class="form-group" id="f-perfil">
-        <fieldset class="perfil">
-          <legend>Você é</legend>
-          <input type="radio" id="P-ADV" name="perfil" value="Advogado"><label for="P-ADV">Advogado</label>
-          <input type="radio" id="P-CONT" name="perfil" value="Contador"><label for="P-CONT">Contador</label>
-        </fieldset>
-        <span class="msg">Escolha uma opção.</span>
-      </div>
       <div class="form-group" id="f-esc">
         <label for="ESC">Nome do escritório</label>
         <input id="ESC" name="escritorio" type="text" placeholder="Como ele aparece no Google" autocomplete="organization" maxlength="120" required>
@@ -173,9 +165,9 @@
         </div>
       </div>
       <div class="form-group" id="f-ig">
-        <label for="IG">Instagram do escritório <span class="opc">(opcional)</span></label>
+        <label for="IG">Instagram da sua empresa <span class="opc">(opcional)</span></label>
         <div class="com-arroba"><span aria-hidden="true">@</span><input id="IG" name="instagram" type="text" placeholder="seuescritorio" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="200" aria-describedby="ig-dica"></div>
-        <span class="dica" id="ig-dica">Só o nome do perfil. Também vale colar o link.</span>
+        <span class="dica" id="ig-dica">O @ do escritório, não o seu perfil pessoal. Também vale colar o link.</span>
         <span class="msg">Esse @ não parece um perfil do Instagram. Confere.</span>
       </div>
       <div class="form-group" id="f-siteesc">
@@ -352,7 +344,6 @@
   [['FNAME','f-nome'],['PHONE','f-tel'],['ESC','f-esc'],['CIDADE','f-cidade'],['BAIRRO','f-bairro'],['IG','f-ig'],['SITEESC','f-siteesc']].forEach(function(p){
     $(p[0]).addEventListener('input', function(){ setErr(p[1], false); });
   });
-  document.querySelectorAll('input[name=perfil]').forEach(function(r){ r.addEventListener('change', function(){ setErr('f-perfil', false); }); });
   /* mostra o @ limpo quando a pessoa sai do campo (colou o link, sai só o usuário) */
   $('IG').addEventListener('blur', function(){ var u = normalizaIG(this.value); if(u && igOk(u)) this.value = u; });
   $('SITEESC').addEventListener('blur', function(){ this.value = this.value.trim(); });
@@ -406,8 +397,6 @@
     if(nome.length < 2) erro('f-nome', $('FNAME'));
     var t = leTelefone();
     if(t.erro){ telMsg.textContent = t.erro; erro('f-tel', tel); }
-    var perfilEl = document.querySelector('input[name=perfil]:checked');
-    if(!perfilEl) erro('f-perfil', $('P-ADV'));
     var esc = limpo($('ESC').value).slice(0,120);
     if(esc.length < 2) erro('f-esc', $('ESC'));
     var cidade = limpo($('CIDADE').value).slice(0,80);
@@ -423,7 +412,7 @@
 
     var hp = $('SITE').value;
     var dados = {
-      nome: nome, email: '', whatsapp: t.e164, pais: t.pais, perfil: perfilEl.value,
+      nome: nome, email: '', whatsapp: t.e164, pais: t.pais, perfil: 'Outro', /* área sai do Raio-X; o banco exige um valor */
       escritorio: esc, cidade: cidade, bairro: bairro, instagram: ig, site_escritorio: site,
       pagina: location.href.split('#')[0].slice(0,500),
       referrer: document.referrer.slice(0,500)
