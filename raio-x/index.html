@@ -47,6 +47,19 @@
   .form-group.err .dica{ display:none; }
   .linha2{ display:grid; grid-template-columns:1.25fr 1fr; gap:10px; }
 
+  /* cidade com sugestão (lista do IBGE em cidades.json, carregada no foco) */
+  .cidade-box{ position:relative; }
+  #f-cidade{ scroll-margin-top:12px; }
+  .cidade-lista{ position:absolute; left:0; top:calc(100% + 2px); z-index:50; list-style:none; margin:0; padding:4px 0; min-width:100%;
+    width:max-content; max-width:min(340px, calc(100vw - 48px)); max-height:264px; overflow-y:auto; background:#fff;
+    border:1.5px solid var(--vinho); box-shadow:0 18px 40px rgba(42,14,22,.22); }
+  .cidade-lista[hidden]{ display:none; }
+  .cidade-lista li{ padding:11px 14px; font-size:.95rem; color:var(--ink); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cidade-lista li .uf{ color:var(--muted); font-weight:600; }
+  .cidade-lista li[aria-selected=true], .cidade-lista li:hover{ background:rgba(42,14,22,.07); }
+  .cidade-lista li.vazio{ color:var(--muted); cursor:default; white-space:normal; }
+  .cidade-lista li.vazio:hover{ background:none; }
+
   /* advogado ou contador: dois botões */
   .perfil{ display:grid; grid-template-columns:1fr 1fr; gap:8px; border:0; }
   .perfil legend{ font-size:.84rem; font-weight:600; color:var(--vinho); margin-bottom:6px; padding:0; }
@@ -147,6 +160,11 @@
         <input id="PHONE" name="whatsapp" type="tel" placeholder="(21) 99999-9999" inputmode="tel" autocomplete="tel" aria-describedby="tel-msg" required>
         <span class="msg" id="tel-msg" aria-live="polite">Informe seu WhatsApp com DDD.</span>
       </div>
+      <div class="form-group" id="f-email">
+        <label for="EMAIL">Seu e-mail</label>
+        <input id="EMAIL" name="email" type="email" placeholder="voce@escritorio.com.br" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required>
+        <span class="msg">Confere o e-mail.</span>
+      </div>
       <div class="form-group" id="f-esc">
         <label for="ESC">Nome do escritório</label>
         <input id="ESC" name="escritorio" type="text" placeholder="Como ele aparece no Google" autocomplete="organization" maxlength="120" required>
@@ -155,8 +173,12 @@
       <div class="linha2">
         <div class="form-group" id="f-cidade">
           <label for="CIDADE">Cidade</label>
-          <input id="CIDADE" name="cidade" type="text" placeholder="Rio de Janeiro" autocomplete="address-level2" maxlength="80" required>
-          <span class="msg">Escreva a cidade.</span>
+          <div class="cidade-box">
+            <input id="CIDADE" name="cidade" type="text" placeholder="Niterói" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="80" required
+              role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cidade-lista" aria-describedby="cidade-msg">
+            <ul id="cidade-lista" class="cidade-lista" role="listbox" aria-label="Cidades" hidden></ul>
+          </div>
+          <span class="msg" id="cidade-msg" aria-live="polite">Escolha a cidade na lista.</span>
         </div>
         <div class="form-group" id="f-bairro">
           <label for="BAIRRO">Bairro <span class="opc">(opcional)</span></label>
@@ -341,12 +363,100 @@
   function limpo(v){ return String(v || '').replace(/[\u0000-\u001f\u007f]/g,'').replace(/\s+/g,' ').trim(); }
 
   function setErr(id,on){ $(id).classList.toggle('err', on); }
-  [['FNAME','f-nome'],['PHONE','f-tel'],['ESC','f-esc'],['CIDADE','f-cidade'],['BAIRRO','f-bairro'],['IG','f-ig'],['SITEESC','f-siteesc']].forEach(function(p){
+  [['FNAME','f-nome'],['PHONE','f-tel'],['EMAIL','f-email'],['ESC','f-esc'],['CIDADE','f-cidade'],['BAIRRO','f-bairro'],['IG','f-ig'],['SITEESC','f-siteesc']].forEach(function(p){
     $(p[0]).addEventListener('input', function(){ setErr(p[1], false); });
   });
   /* mostra o @ limpo quando a pessoa sai do campo (colou o link, sai só o usuário) */
   $('IG').addEventListener('blur', function(){ var u = normalizaIG(this.value); if(u && igOk(u)) this.value = u; });
   $('SITEESC').addEventListener('blur', function(){ this.value = this.value.trim(); });
+
+  /* ---- Cidade: só vale cidade da lista do IBGE (cidades.json, gerado uma vez da API do IBGE e commitado).
+     Carrega no 1º foco; sugere a partir de 2 letras sem diferença de acento e caixa; mostra "Niterói - RJ".
+     Teclado: setas, Enter escolhe, Esc fecha. Se a lista não carregar (rede), aceita o texto para não perder o pedido. */
+  var cid = $('CIDADE'), cidLista = $('cidade-lista'), cidMsg = $('cidade-msg');
+  var cidades = null, cidCarga = null, cidFalhou = false, cidEscolhida = null, cidOpcoes = [], cidAtiva = -1;
+  function semAcento(s){ return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+  function rotuloCid(c){ return c.n + ' - ' + c.uf; }
+  function carregaCidades(){
+    if(cidCarga) return cidCarga;
+    cidCarga = fetch('cidades.json', { cache:'force-cache' }).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(j){
+        var l = [];
+        Object.keys(j).forEach(function(uf){ j[uf].forEach(function(n){ var k = semAcento(n); l.push({ n:n, uf:uf, k:k, kc:k + ' ' + uf.toLowerCase() }); }); });
+        cidades = l; cidFalhou = false;
+        if(document.activeElement === cid) sugere();
+      })
+      .catch(function(){ cidFalhou = true; cidCarga = null; });
+    return cidCarga;
+  }
+  function fechaCid(){ cidLista.hidden = true; cid.setAttribute('aria-expanded', 'false'); cid.removeAttribute('aria-activedescendant'); cidAtiva = -1; }
+  function marcaAtiva(i){
+    var itens = cidLista.querySelectorAll('[role=option]');
+    for(var k = 0; k < itens.length; k++) itens[k].setAttribute('aria-selected', k === i ? 'true' : 'false');
+    cidAtiva = i;
+    if(i >= 0 && itens[i]){ cid.setAttribute('aria-activedescendant', itens[i].id); itens[i].scrollIntoView({ block:'nearest' }); }
+    else cid.removeAttribute('aria-activedescendant');
+  }
+  function escolhe(c){
+    cidEscolhida = c; cid.value = rotuloCid(c); setErr('f-cidade', false); fechaCid();
+  }
+  /* ordem: começa com o texto, nome exato, capital, RJ, nome mais curto ("rio" mostra o Rio de Janeiro antes de Rio Azul) */
+  var CAPITAIS = ['Rio Branco-AC','Maceió-AL','Macapá-AP','Manaus-AM','Salvador-BA','Fortaleza-CE','Brasília-DF','Vitória-ES',
+    'Goiânia-GO','São Luís-MA','Cuiabá-MT','Campo Grande-MS','Belo Horizonte-MG','Belém-PA','João Pessoa-PB','Curitiba-PR','Recife-PE',
+    'Teresina-PI','Rio de Janeiro-RJ','Natal-RN','Porto Alegre-RS','Porto Velho-RO','Boa Vista-RR','Florianópolis-SC','São Paulo-SP',
+    'Aracaju-SE','Palmas-TO'].reduce(function(o, s){ o[semAcento(s)] = 1; return o; }, {});
+  function sugere(){
+    var q = semAcento(cid.value).replace(/\s*-\s*/g, ' ').trim();
+    cidLista.innerHTML = ''; cidOpcoes = [];
+    if(!cidades || q.length < 2){ fechaCid(); return; }
+    var achadas = [];
+    for(var i = 0; i < cidades.length; i++){
+      var c = cidades[i], pos = c.kc.indexOf(q);
+      if(pos < 0) continue;
+      var cap = CAPITAIS[c.k + '-' + c.uf.toLowerCase()] ? 0 : 1;
+      achadas.push({ c:c, r:[pos === 0 ? 0 : 1, c.k === q ? 0 : 1, cap, c.uf === 'RJ' ? 0 : 1, c.n.length] });  /* empate: RJ primeiro (público da HALVES) */
+    }
+    achadas.sort(function(a, b){ for(var k = 0; k < 5; k++){ if(a.r[k] !== b.r[k]) return a.r[k] - b.r[k]; } return a.c.k < b.c.k ? -1 : 1; });
+    cidOpcoes = achadas.slice(0, 8).map(function(a){ return a.c; });
+    if(!cidOpcoes.length){
+      var v = document.createElement('li'); v.className = 'vazio'; v.textContent = 'Nenhuma cidade com esse nome.';
+      cidLista.appendChild(v);
+    }
+    cidOpcoes.forEach(function(c, i){
+      var li = document.createElement('li');
+      li.id = 'cid-op-' + i; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+      li.appendChild(document.createTextNode(c.n + ' '));
+      var s = document.createElement('span'); s.className = 'uf'; s.textContent = '- ' + c.uf; li.appendChild(s);
+      li.addEventListener('mousedown', function(e){ e.preventDefault(); });   /* não tira o foco do campo */
+      li.addEventListener('click', function(){ escolhe(c); });
+      cidLista.appendChild(li);
+    });
+    cidLista.hidden = false; cid.setAttribute('aria-expanded', 'true'); cidAtiva = -1;
+  }
+  /* texto que bate exatamente com uma cidade (com ou sem a UF) vira escolha */
+  function confereDigitado(){
+    if(cidEscolhida || !cidades) return;
+    var v = semAcento(cid.value), m = v.match(/^(.*?)\s*-\s*([a-z]{2})$/);
+    var achadas = cidades.filter(function(c){ return m ? (c.k === m[1] && c.uf.toLowerCase() === m[2]) : c.k === v; });
+    if(achadas.length === 1) escolhe(achadas[0]);
+  }
+  cid.addEventListener('focus', function(){
+    carregaCidades(); if(cidades && !cidEscolhida) sugere();
+    /* celular: sobe o campo para o topo, para a lista não ficar atrás do teclado */
+    if(window.matchMedia && window.matchMedia('(max-width: 899px)').matches){
+      setTimeout(function(){ $('f-cidade').scrollIntoView({ block:'start', behavior:'smooth' }); }, 250);
+    }
+  });
+  cid.addEventListener('input', function(){ cidEscolhida = null; if(!cidades) carregaCidades(); sugere(); });
+  cid.addEventListener('keydown', function(e){
+    var aberto = !cidLista.hidden && cidOpcoes.length;
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(!aberto) sugere(); if(cidOpcoes.length) marcaAtiva(Math.min(cidAtiva + 1, cidOpcoes.length - 1)); }
+    else if(e.key === 'ArrowUp'){ if(aberto){ e.preventDefault(); marcaAtiva(Math.max(cidAtiva - 1, 0)); } }
+    else if(e.key === 'Enter'){ if(aberto){ e.preventDefault(); escolhe(cidOpcoes[cidAtiva >= 0 ? cidAtiva : 0]); } }
+    else if(e.key === 'Escape'){ if(!cidLista.hidden){ e.preventDefault(); fechaCid(); } }
+    else if(e.key === 'Tab'){ if(aberto && cidAtiva >= 0) escolhe(cidOpcoes[cidAtiva]); }
+  });
+  cid.addEventListener('blur', function(){ setTimeout(function(){ confereDigitado(); fechaCid(); }, 120); });
 
   function comPrazo(url, opts){
     var ctrl = window.AbortController ? new AbortController() : null;
@@ -356,7 +466,7 @@
   }
   function enviaCRM(d, hp){
     var corpo = {
-      p_nome: d.nome, p_email: null, p_whatsapp: d.whatsapp, p_pais: d.pais, p_perfil: d.perfil,
+      p_nome: d.nome, p_email: d.email, p_whatsapp: d.whatsapp, p_pais: d.pais, p_perfil: d.perfil,
       p_utm_source: d.utm_source, p_utm_medium: d.utm_medium, p_utm_campaign: d.utm_campaign,
       p_utm_content: d.utm_content, p_utm_term: d.utm_term,
       p_pagina: d.pagina, p_referrer: d.referrer, p_site: hp,
@@ -397,10 +507,15 @@
     if(nome.length < 2) erro('f-nome', $('FNAME'));
     var t = leTelefone();
     if(t.erro){ telMsg.textContent = t.erro; erro('f-tel', tel); }
+    var email = limpo($('EMAIL').value).toLowerCase().slice(0,254);
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) erro('f-email', $('EMAIL'));
     var esc = limpo($('ESC').value).slice(0,120);
     if(esc.length < 2) erro('f-esc', $('ESC'));
-    var cidade = limpo($('CIDADE').value).slice(0,80);
-    if(cidade.length < 2) erro('f-cidade', $('CIDADE'));
+    confereDigitado();
+    var cidade = '';
+    if(cidEscolhida) cidade = rotuloCid(cidEscolhida);                       /* "Niterói - RJ": o banco não tem campo de UF no capturar_lead */
+    else if(cidFalhou && limpo(cid.value).length >= 2) cidade = limpo(cid.value).slice(0,80);   /* lista não carregou: aceita o texto */
+    else { cidMsg.textContent = limpo(cid.value) ? 'Escolha a cidade na lista.' : 'Escreva e escolha a cidade.'; erro('f-cidade', cid); }
     var bairro = limpo($('BAIRRO').value).slice(0,80);
     if(bairro && bairro.length < 2) erro('f-bairro', $('BAIRRO'));
     var igBruto = $('IG').value.trim();
@@ -412,7 +527,7 @@
 
     var hp = $('SITE').value;
     var dados = {
-      nome: nome, email: '', whatsapp: t.e164, pais: t.pais, perfil: 'Outro', /* área sai do Raio-X; o banco exige um valor */
+      nome: nome, email: email, whatsapp: t.e164, pais: t.pais, perfil: 'Outro', /* área sai do Raio-X; o banco exige um valor */
       escritorio: esc, cidade: cidade, bairro: bairro, instagram: ig, site_escritorio: site,
       pagina: location.href.split('#')[0].slice(0,500),
       referrer: document.referrer.slice(0,500)
